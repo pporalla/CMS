@@ -1,0 +1,30 @@
+.account-card {
+  background: white;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+}
+
+.account-card h3 {
+  margin-top: 0;
+  margin-bottom: 24px;
+  color: #111827;
+  border-bottom: 1px solid #f3f4f6;
+  padding-bottom: 16px;
+}
+
+.info-row {
+  display: flex;
+  margin-bottom: 16px;
+}
+
+.info-label {
+  width: 140px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.info-value {
+  color: #111827;
+  font-weight: 500;
+}

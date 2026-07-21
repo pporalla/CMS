@@ -1,0 +1,63 @@
+.dashboard-container {
+  min-height: 100vh;
+  background-color: #f9fafb;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Top Navigation Bar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  padding: 0 40px;
+  height: 60px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Very subtle bottom shadow */
+}
+
+.nav-brand {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.nav-links {
+  display: flex;
+  gap: 15px;
+}
+
+.nav-item {
+  background: none;
+  border: none;
+  font-size: 15px;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.nav-item:hover {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+/* The active tab gets darker text and a background */
+.nav-item.active {
+  color: #111827;
+  background-color: #f3f4f6;
+}
+
+/* Logout is styled differently to prevent accidental clicks */
+.nav-logout {
+  color: #ef4444;
+  margin-left: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.nav-logout:hover {
+  background-color: #fef2f2;
+  color: #dc2626;
+}

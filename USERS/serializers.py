@@ -27,7 +27,4 @@ class UserSignupSerializer(serializers.ModelSerializer):
         # 4. Save the user to the database. (This triggers our custom EMP001 logic we wrote earlier!)
         user.save()  #save() is a method in StoreUser model
         
-        return user  # 5. It saves the user to the database and returns the user object to the react frontend.
-       
-        
-        
+        return user  # 5. It saves the user to the database and returns the user object to the react frontend.        

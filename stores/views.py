@@ -6,16 +6,25 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from .serializers import ItemSerializer, OrderSerializer
 
-#views
 class ItemListView(APIView):
     permission_classes = [IsAuthenticated]
     
     def get(self, request):
-        # 1. Ask the database for every item
+        #requesting user 
+        user = request.user
+        # 1. If the user is a manager, return everything
+        if user.is_staff:
+            items = Item.objects.all()
+        # 2. If the user is an employee WITH an assigned store, filter by their store
+        elif user.store:
+            items = Item.objects.filter(store=user.store)
+        # 3. If the user has no store assigned yet, return an empty list
+        else:
+            items = Item.objects.none()
+        
         items = Item.objects.all()
         
-        # 2. Hand the database items to the translator 
-        # (many=True tells it we are passing a list, not just one item)
+        # many=True tells it we are passing a list, not just one item
         serializer = ItemSerializer(items, many=True)
         
         #data to React
@@ -25,7 +34,15 @@ class OrderListView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        orders = Order.objects.all()
+        
+        user = request.user
+        if user.is_staff:
+            orders = Order.objects.all()
+        elif user.store:
+            orders = Order.objects.filter(store=user.store)
+        else:
+            orders = Order.objects.none()
+            
         serializer = OrderSerializer(orders, many=True)
         
         return Response(serializer.data)

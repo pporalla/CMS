@@ -34,9 +34,26 @@ function Login({ onLoginSuccess }) {
         // localStorage is the browser's digital wallet. We name the slot 'access_token'.
         localStorage.setItem('access_token', data.access);
         
-        localStorage.setItem('is_staff', response.data.is_staff);
-        
-        alert("Token saved to wallet!");
+        // Check if they are a manager
+        try {
+          const roleCheck = await fetch('http://localhost:8000/api/manager/employees/', {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${data.access}`
+            }
+          });
+
+          if (roleCheck.ok) {
+            // Django let them in! They are a manager.
+            localStorage.setItem('is_staff', 'true');
+          } else {
+            // Django blocked them. They are a normal employee. Remove 'is_staff' completely.
+            localStorage.removeItem('is_staff');
+          }
+        } catch (err) {
+          // Fallback in case of a network hiccup
+          localStorage.removeItem('is_staff');
+        }
         
         // We trigger the wire to tell App.jsx to change the screen
         onLoginSuccess();

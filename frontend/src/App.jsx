@@ -59,24 +59,14 @@ function App() {
       {isLoggedIn ? (
         <BrowserRouter>
           <Routes>
+            {/* manager routes */}
             <Route element={<ProtectedManagerRoute />}>
-    
               <Route path="/manager" element={<ManagerLayout />}>
                 <Route path="employees" element={<ManagerEmployeeList />} />
               </Route>
-
-            </Route>
-            
-            {/* --- ZONE 1: THE MANAGER ROUTES --- */}
-            {/* Any URL starting with /manager uses the ManagerLayout (Sidebar) */}
-            <Route path="/manager" element={<ManagerLayout />}>
-               <Route path="employees" element={<ManagerEmployeeList />} />
-               {/* We will add /manager/orders and /manager/items here later */}
             </Route>
 
-
-            {/* --- ZONE 2: THE EMPLOYEE ROUTES (Your existing code) --- */}
-            {/* Because this Route has no path, it acts as the default layout for everything else */}
+            {/* employees routes */}
             <Route element={<EmployeeLayout />}>
               <Route path="/" element={<Navigate to="/account" replace />} />
               <Route path="/home" element={<Home onLogout={handleLogout} />} />
@@ -85,7 +75,6 @@ function App() {
               <Route path="/items" element={<Items onLogout={handleLogout} />} />
               <Route path="*" element={<NotFound />} />
             </Route>
-
           </Routes>
         </BrowserRouter>
       ) : (

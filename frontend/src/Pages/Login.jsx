@@ -34,6 +34,8 @@ function Login({ onLoginSuccess }) {
         // localStorage is the browser's digital wallet. We name the slot 'access_token'.
         localStorage.setItem('access_token', data.access);
         
+        localStorage.setItem('is_staff', response.data.is_staff);
+        
         alert("Token saved to wallet!");
         
         // We trigger the wire to tell App.jsx to change the screen

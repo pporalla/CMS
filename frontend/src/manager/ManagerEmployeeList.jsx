@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 
-// 1. THE COMPONENT FUNCTION STARTS HERE
 const ManagerEmployeeList = () => {
     
-    // 2. ALL STATE GOES IMMEDIATELY INSIDE THE FUNCTION
     const [employees, setEmployees] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -21,7 +19,6 @@ const ManagerEmployeeList = () => {
     });
     const [formError, setFormError] = useState(null);
 
-    // 3. YOUR FETCH FUNCTION
     const fetchEmployees = async () => {
         try {
             const token = localStorage.getItem('access_token');
@@ -47,7 +44,6 @@ const ManagerEmployeeList = () => {
             });
             if (response.ok) {
                 const data = await response.json();
-                console.log("DJANGO STORES RESPONSE:", data);
                 setStores(data);
             }
         } catch (err) {
@@ -60,7 +56,6 @@ const ManagerEmployeeList = () => {
         fetchStores();
     }, []);
 
-    // 4. YOUR EVENT HANDLERS
     const handleInputChange = (e) => {
         setFormData({
             ...formData,
@@ -98,11 +93,9 @@ const ManagerEmployeeList = () => {
         }
     };
 
-    // 5. LOADING / ERROR STATES
     if (loading) return <div className="loading-state">Loading employees...</div>;
     if (error) return <div className="error-state">Error: {error}</div>;
 
-    // 6. THE UI RETURN BLOCK
     return (
         <section className="manager-employee-section">
             <header className="section-header">
@@ -223,6 +216,6 @@ const ManagerEmployeeList = () => {
             </div>
         </section>
     );
-}; // <--- COMPONENT FUNCTION ENDS HERE
+};
 
 export default ManagerEmployeeList;

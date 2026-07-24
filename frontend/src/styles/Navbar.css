@@ -50,7 +50,6 @@
   background-color: #f3f4f6;
 }
 
-/* Logout is styled differently to prevent accidental clicks */
 .nav-logout {
   color: #ef4444;
   margin-left: 20px;

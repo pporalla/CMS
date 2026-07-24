@@ -1,31 +1,42 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import '../styles/Navbar.css';
 
-const ManagerSidebar = () => {
-    return (
-        // <aside> is the correct semantic HTML tag for a sidebar
-        <aside className="manager-sidebar">
-            <h2>Manager Portal</h2>
+const ManagerSidebar = ({ onLogout }) => {
+    const location = useLocation();
+    return(
+
+        <nav className="navbar">
+            <div className="nav-brand">Manager Portal</div>
+            <div className="nav-links">
+
+                {/* We use React Router's <Link> instead of <button> to change the URL without refreshing the page */}
+                <Link to="/manager/employees" className={`nav-item ${location.pathname === '/manager/employees' ? 'active' : ''}`}>
+                Employees
+                </Link>
+                
+                <Link to="/manager/orders" className={`nav-item ${location.pathname === '/manager/orders' ? 'active' : ''}`}>
+                Global Orders
+                </Link>
+                
+                <Link to="/manager/items" className={`nav-item ${location.pathname === '/manager/items' ? 'active' : ''}`}>
+                Global Inventory
+                </Link>
+
+                <Link to="/manager/stores" className={`nav-item ${location.pathname === '/manager/stores' ? 'active' : ''}`}>
+                Stores & Markets
+                </Link>
+                
+                {/* Logout remains a button because it triggers a function, it doesn't change the URL */}
+                <button className="nav-item nav-logout" onClick={onLogout}>
+                Logout
+                </button>
             
-            // nav indicates this section contains navigation links
-            <nav className="sidebar-nav">
-                <ul className="sidebar-menu">
-                    <li className="menu-item">
-                        <Link to="/manager/employees">👥 Employees</Link>
-                    </li>
-                    <li className="menu-item">
-                        <Link to="/manager/orders">📦 Global Orders</Link>
-                    </li>
-                    <li className="menu-item">
-                        <Link to="/manager/items">🏷️ Global Inventory</Link>
-                    </li>
-                    <li className="menu-item">
-                        <Link to="/manager/stores">🏪 Stores & Markets</Link>
-                    </li>
-                </ul>
-            </nav>
-        </aside>
+            </div>
+        </nav>
+
+
     );
-};
+}
 
 export default ManagerSidebar;

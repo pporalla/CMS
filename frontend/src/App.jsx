@@ -12,6 +12,18 @@ import Orders from './Transactions/Orders';
 
 import ManagerLayout from './manager/ManagerLayout';
 import ManagerEmployeeList from './manager/ManagerEmployeeList';
+
+// When a user hits the base "/", this checks their badge and routes them correctly
+const RootRedirect = () => {
+  const isManager = localStorage.getItem('is_staff') === 'true';
+  
+  if (isManager) {
+    return <Navigate to="/manager/employees" replace />;
+  } else {
+    return <Navigate to="/account" replace />;
+  }
+};
+
 function App() {
   // 1. THE DATA FLOW: When the page loads, React checks the browser's digital wallet.
   // If 'access_token' exists, it sets isLoggedIn to true. If not, it sets it to false.
@@ -24,13 +36,12 @@ function App() {
     setIsLoggedIn(true);
   };
 
-  // 3. A simple function to delete the keycard and log out
   const handleLogout = () => {
-    localStorage.removeItem('access_token'); // Throw away the keycard
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('is_staff');
     setIsLoggedIn(false); // Change the screen back to the login form
   };
 
-  // 1. The Manager Bouncer Component
   const ProtectedManagerRoute = () => {
   // Check the browser storage to see if they are a manager
     const isManager = localStorage.getItem('is_staff') === 'true';
@@ -42,7 +53,16 @@ function App() {
     }
 
   return <Outlet />;
-};
+  };
+
+  //Keeps managers OUT of normal employee pages
+  const ProtectedEmployeeRoute = () => {
+    const isManager = localStorage.getItem('is_staff') === 'true';
+    if (isManager) {
+      return <Navigate to="/manager/employees" replace />;
+    }
+    return <Outlet />;
+  };
 
   // The <Outlet /> tag tells React where to inject the Home, Account, Orders, or Items component.
   const EmployeeLayout = ({onLogout}) => (
@@ -59,6 +79,10 @@ function App() {
       {isLoggedIn ? (
         <BrowserRouter>
           <Routes>
+
+            {/* THE FIX: Use our new Smart Redirect for the base path */}
+            <Route path="/" element={<RootRedirect />} />
+
             {/* manager routes */}
             <Route element={<ProtectedManagerRoute />}>
               <Route path="/manager" element={<ManagerLayout />}>
@@ -67,13 +91,14 @@ function App() {
             </Route>
 
             {/* employees routes */}
-            <Route element={<EmployeeLayout />}>
-              <Route path="/" element={<Navigate to="/account" replace />} />
-              <Route path="/home" element={<Home onLogout={handleLogout} />} />
-              <Route path="/account" element={<MyAccount onLogout={handleLogout} />} />
-              <Route path="/orders" element={<Orders onLogout={handleLogout} />} />
-              <Route path="/items" element={<Items onLogout={handleLogout} />} />
-              <Route path="*" element={<NotFound />} />
+            <Route element={<ProtectedEmployeeRoute />}>
+              <Route element={<EmployeeLayout />}>
+                <Route path="/home" element={<Home onLogout={handleLogout} />} />
+                <Route path="/account" element={<MyAccount onLogout={handleLogout} />} />
+                <Route path="/orders" element={<Orders onLogout={handleLogout} />} />
+                <Route path="/items" element={<Items onLogout={handleLogout} />} />
+                <Route path="*" element={<NotFound />} />
+              </Route>
             </Route>
           </Routes>
         </BrowserRouter>

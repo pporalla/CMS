@@ -2,7 +2,7 @@ from django.db import models
 # We import AbstractBaseUser to get secure passwords and login capabilities for free
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
-
+#Not cms manager. It is used to get the defualt fields like is_staff, is_active, superuser, etc..
 class StoreUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
@@ -20,6 +20,7 @@ class StoreUserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 class StoreUser(AbstractBaseUser, PermissionsMixin):
+    #PermissionsMixin in Django is a built-in tool that adds the database fields and methods needed for groups and user permissions.
     
     user_id = models.CharField(max_length=15, primary_key=True, blank=True)
     
@@ -28,7 +29,6 @@ class StoreUser(AbstractBaseUser, PermissionsMixin):
     store = models.ForeignKey('stores.Store', on_delete=models.SET_NULL, null=True, blank=True, related_name='users')
     
     # Linking the User to Marketplaces (Many-To-Many)
-    # blank=True means an employee doesn't *have* to be assigned a marketplace immediately.
     marketplaces = models.ManyToManyField('marketplaces.Marketplace', blank=True, related_name='employees')
     
     first_name = models.CharField(max_length=100)

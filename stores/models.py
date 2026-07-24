@@ -9,7 +9,6 @@ class Store(models.Model):
     store_code = models.IntegerField(unique=True, null=True, blank=True)
     store_address = models.TextField()
     pincode = models.CharField(max_length=10)
-    
 
     def __str__(self):
         # This just ensures Django displays the store's name in menus instead of "Store Object(1)"

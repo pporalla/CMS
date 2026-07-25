@@ -10,39 +10,40 @@ class ItemListView(APIView):
     permission_classes = [IsAuthenticated]
     
     def get(self, request):
-        #requesting user 
         user = request.user
-        # 1. If the user is a manager, return everything
-        if user.is_staff:
+        
+        # 1. Superusers and Managers see EVERYTHING across all stores and marketplaces.
+        if user.is_superuser or user.is_manager:
             items = Item.objects.all()
-        # 2. If the user is an employee WITH an assigned store, filter by their store
-        elif user.store:
+            
+        # 2. Employees ONLY see items for their specific assigned store.
+        elif user.is_employee and user.store:
             items = Item.objects.filter(store=user.store)
-        # 3. If the user has no store assigned yet, return an empty list
+            
+        # 3. Fallback for unassigned users
         else:
             items = Item.objects.none()
-        
-        items = Item.objects.all()
-        
-        # many=True tells it we are passing a list, not just one item
+            
         serializer = ItemSerializer(items, many=True)
-        
-        #data to React
         return Response(serializer.data)
     
 class OrderListView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        
         user = request.user
-        if user.is_staff:
+        
+        # 1. Superusers and Managers see all orders everywhere.
+        if user.is_superuser or user.is_manager: 
             orders = Order.objects.all()
-        elif user.store:
+            
+        # 2. Employees ONLY see orders assigned to their store.
+        elif user.is_employee and user.store:
             orders = Order.objects.filter(store=user.store)
+            
+        # 3. Fallback
         else:
             orders = Order.objects.none()
             
         serializer = OrderSerializer(orders, many=True)
-        
         return Response(serializer.data)

@@ -61,3 +61,11 @@ class StoreUser(AbstractBaseUser, PermissionsMixin):
             
         # Save to the database
         super().save(*args, **kwargs)
+        
+    @property
+    def is_manager(self):
+        return self.groups.filter(name='Manager').exists()
+
+    @property
+    def is_employee(self):
+        return self.groups.filter(name='Employee').exists()

@@ -69,5 +69,22 @@ class Order(models.Model):
     # Order date
     order_date = models.DateTimeField(auto_now_add=True)
     
+    assigned_to = models.ForeignKey(
+        'USERS.StoreUser', 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True, 
+        related_name='assigned_orders',
+        limit_choices_to={'groups__name': 'Employee'} # Only lets managers assign to actual employees
+    )
+    
     def __str__(self):
         return f"{self.order_id} - {self.order_name}"
+    
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_items')
+    item = models.ForeignKey(Item, on_delete=models.RESTRICT)
+    quantity = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return f"{self.quantity}x {self.item.item_name} for {self.order.order_name}"

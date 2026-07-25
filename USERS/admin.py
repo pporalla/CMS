@@ -15,6 +15,8 @@ class StoreUserAdmin(admin.ModelAdmin):
     # Creates a search bar that scans these specific text fields
     search_fields = ('user_id', 'email', 'first_name', 'mobileno')
     
+    filter_horizontal = ('groups', 'marketplaces')
+    
     # Organizes the employee edit page into visual sections with headers
     fieldsets = (
         ('Personal Information', {
@@ -24,7 +26,7 @@ class StoreUserAdmin(admin.ModelAdmin):
             'fields': ('store', 'marketplaces')
         }),
         ('Permissions & Security', {
-            'fields': ('is_staff', 'is_active', 'password')
+            'fields': ('is_staff', 'is_active', 'password', 'is_superuser', 'groups')
         }),
     )
     
@@ -37,6 +39,23 @@ class StoreUserAdmin(admin.ModelAdmin):
             
         # Continue with the normal save process
         super().save_model(request, obj, form, change)
-    
-    
+        
+    # 1. PREVENT MANAGERS FROM DELETING OTHER MANAGERS OR SUPERUSERS
+    def has_delete_permission(self, request, obj=None):
+        if obj is not None:
+            is_target_manager = obj.groups.filter(name='Manager').exists()
+            
+            if obj.is_superuser or is_target_manager:
+                if not request.user.is_superuser:
+                    return False
+                    
+        return super().has_delete_permission(request, obj)
+
+    # 2. PREVENT MANAGERS FROM CHANGING SENSITIVE ROLES
+    def get_readonly_fields(self, request, obj=None):
+        if request.user.is_superuser:
+            return self.readonly_fields
+            
+        return self.readonly_fields + ('is_superuser', 'is_staff', 'groups', 'user_permissions')
+
 admin.site.register(StoreUser, StoreUserAdmin)

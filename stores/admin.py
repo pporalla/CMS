@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import Store, Order, Item
+from .models import Store, Order, Item, OrderItem
+
+# Register your models here.
 
 class StoreAdmin(admin.ModelAdmin):
     list_display = ('store_id', 'store_name', 'store_code', 'store_address', 'pincode')
@@ -19,6 +21,7 @@ class ItemAdmin(admin.ModelAdmin):
 admin.site.register(Store, StoreAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Item, ItemAdmin)
+admin.site.register(OrderItem)
 
 
     

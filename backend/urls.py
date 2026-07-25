@@ -22,6 +22,4 @@ urlpatterns = [
     path('api/users/', include('USERS.urls')),
     path('api/business/', include('marketplaces.urls')),
     path('api/stores/', include('stores.urls')),
-    
-    path('api/manager/', include('manager.urls')),
 ]

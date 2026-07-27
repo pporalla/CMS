@@ -46,9 +46,15 @@ class Item(models.Model):
     store = models.ForeignKey('Store', on_delete=models.CASCADE, related_name='items')
     
     def __str__(self):
-        return self.item_name
+        return f"{self.item_name} (Qty:{self.quantity})"
 
 class Order(models.Model):
+    STATUS_CHOICES = (
+        ('PENDING', 'Pending Store Assignment'),
+        ('ASSIGNED', 'Assigned - Waiting for Employee'),
+        ('VERIFIED', 'Item Found - Ready to Ship'),
+        ('OUT_OF_STOCK', 'Item Missing/Out of Stock'),
+    )
     order_id = models.AutoField(primary_key=True)
     order_name = models.CharField(max_length=30)
     
@@ -61,6 +67,7 @@ class Order(models.Model):
     
     store = models.ForeignKey('Store', on_delete=models.CASCADE, related_name='orders')
     
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
     # Pricing
     mrp = models.DecimalField(max_digits=10, decimal_places=2)
     discount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)

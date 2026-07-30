@@ -53,7 +53,7 @@ function MyAccount({ onLogout }) {
           </div>
           <div className="info-row">
             <div className="info-label">Full Name</div>
-            <div className="info-value">{userData.first_name}</div>
+            <div className="info-value">{userData.full_name}</div>
           </div>
           <div className="info-row">
             <div className="info-label">Email Address</div>
@@ -64,8 +64,12 @@ function MyAccount({ onLogout }) {
             <div className="info-value">{userData.store}</div>
           </div>
           <div className="info-row">
-            <div className="info-label">Security Status</div>
-            <div className="info-value" style={{ color: '#10b981' }}>{userData.secret_message}</div>
+            <div className="info-label">Store_id</div>
+            <div className="info-value">{userData.store_id}</div>
+          </div>
+          <div className="info-row">
+            <div className="info-label">Address</div>
+            <div className="info-value">{userData.address}</div>
           </div>
         </div>
       ) : (

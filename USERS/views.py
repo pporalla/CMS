@@ -60,8 +60,9 @@ class UserProfileView(APIView):
         # We package their private data into a dictionary and send it back as JSON
         return Response({
             "employee_id": user.user_id,
-            "first_name": user.first_name,
+            "full_name": user.first_name + ' '+ user.last_name,
             "email": user.email,
             "store": store_data["name"] if store_data else "No Store Assigned",
-            "secret_message": "Success!"
+            "store_id" : store_data["id"],
+            "address": user.address
         })

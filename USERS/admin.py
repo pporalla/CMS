@@ -15,7 +15,7 @@ class StoreUserAdmin(admin.ModelAdmin):
     # Creates a search bar that scans these specific text fields
     search_fields = ('user_id', 'email', 'first_name', 'mobileno')
     
-    filter_horizontal = ('groups', 'marketplaces')
+    filter_horizontal =('groups', 'marketplaces')
     
     # Organizes the employee edit page into visual sections with headers
     fieldsets = (

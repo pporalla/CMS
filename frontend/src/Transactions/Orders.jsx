@@ -20,7 +20,6 @@ function Orders({ onLogout }) {
 
       if (response.ok) {
         const data = await response.json();
-        console.log("ORDERS FETCH SUCCESS:", data);
         setOrders(data); 
       } else {
         console.log("STATUS: Failed with code", response.status);

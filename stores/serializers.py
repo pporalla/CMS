@@ -21,8 +21,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
     def get_in_stock(self, obj):
         return obj.item.quantity >= obj.quantity    
     
-class OrderSerializer(serializers.ModelSerializer):
-    
+class OrderSerializer(serializers.ModelSerializer):    
     # This automatically grabs the name of the marketplace and store instead of just the ID number
     marketplace = serializers.StringRelatedField()
     store = serializers.StringRelatedField()
@@ -41,5 +40,4 @@ class OrderSerializer(serializers.ModelSerializer):
         for order_item in obj.order_items.all():
             if order_item.item.quantity < order_item.quantity:
                 return False
-        return True
-        
+        return True        

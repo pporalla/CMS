@@ -1,5 +1,11 @@
 from rest_framework import serializers
-from .models import Item, Order, OrderItem
+from .models import Store,Item, Order, OrderItem
+
+class StoreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Store
+        fields = ['store_name', 'store_code', 'store_address', 'pincode']
+
 class ItemSerializer(serializers.ModelSerializer):
     # This automatically calls the __str__ method on the Store model, 
     # giving you the name instead of just the ID number.

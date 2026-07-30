@@ -9,58 +9,64 @@ import MyAccount from './Pages/MyAccount';
 import NotFound from './components/NotFound';
 import Items from './Transactions/Items';
 import Orders from './Transactions/Orders';
+import ProtectedRoute from './components/ProtectedRoute';
+// import ManagerDashboard from './Manager/CreateOrders';
+import CreateStore from './Manager/CreateStore';
 
 
 function App() {
-  // 1. THE DATA FLOW: When the page loads, React checks the browser's digital wallet.
-  // If 'access_token' exists, it sets isLoggedIn to true. If not, it sets it to false.
   const tokenExists = localStorage.getItem('access_token') !== null;
-  const [isLoggedIn, setIsLoggedIn] = useState(tokenExists);
+  const savedRole = localStorage.getItem('user_role') || null;
 
-  // 2. This is the function we pass down to Login.jsx.
-  // When Login.jsx calls this, it changes our memory box to true, which updates the screen.
-  const handleLoginSuccess = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(tokenExists);
+  const [userRole, setUserRole] = useState(savedRole);
+
+  const handleLoginSuccess = (role) => {
     setIsLoggedIn(true);
+    setUserRole(role);
   };
 
-  // 3. A simple function to delete the keycard and log out
   const handleLogout = () => {
-    localStorage.removeItem('access_token'); // Throw away the keycard
-    setIsLoggedIn(false); // Change the screen back to the login form
+    localStorage.removeItem('access_token'); 
+    localStorage.removeItem('user_role'); 
+    setIsLoggedIn(false); 
+    setUserRole(null); 
   };
 
   return (
-    <div>
-      {isLoggedIn ? (
+    <BrowserRouter>
+      <div className="dashboard-container">
         
-        // THE UI ROUTER: BrowserRouter allows the URL to dictate which component renders
-        <BrowserRouter>
-          <div className="dashboard-container">
+        {isLoggedIn && <Navbar onLogout={handleLogout} userRole={userRole} />}
+        
+        <main className="dashboard-content">
+          <Routes>
+            <Route 
+              path="/login" 
+              element={!isLoggedIn ? <Login onLoginSuccess={handleLoginSuccess} /> : <Navigate to={userRole === 'manager' ? '/manager-dashboard' : '/account'} replace />} 
+            />
             
-            {/* Navbar is outside <Routes> so it stays on the screen at all times */}
-            <Navbar onLogout={handleLogout} />
-            
-            <main className="dashboard-content">
-              <Routes>
-                {/* If they just hit the root URL, bounce them to /account */}
-                <Route path="/" element={<Navigate to="/account" replace />} />
-                
-                {/* The specific page routes */}
-                <Route path="/home" element={<Home onLogout={handleLogout} />} />
-                <Route path="/account" element={<MyAccount onLogout={handleLogout} />} />
-                <Route path="/orders" element={<Orders onLogout={handleLogout} />} />
-                <Route path="/items" element={<Items onLogout={handleLogout} />} />
-                <Route path="*" element = { <NotFound /> } />
-              </Routes>
-            </main>
+            <Route path="/" element={<Navigate to="/login" replace />} />
 
-          </div>
-        </BrowserRouter>
+            {/* MANAGER ROUTES */}
+            <Route element={<ProtectedRoute isAllowed={isLoggedIn && userRole === 'manager'} />}>
+              {/* <Route path="/manager-dashboard" element={<ManagerDashboard onLogout={handleLogout} />} /> */}
+              <Route path="/manager-stores" element={<CreateStore onLogout={handleLogout} />} />
+            </Route>
 
-      ) : (
-        <Login onLoginSuccess={handleLoginSuccess} />
-      )}
-    </div>
+            {/* EMPLOYEE ROUTES */}
+            <Route element={<ProtectedRoute isAllowed={isLoggedIn && userRole === 'employee'} />}>
+              <Route path="/home" element={<Home onLogout={handleLogout} />} />
+              <Route path="/account" element={<MyAccount onLogout={handleLogout} />} />
+              <Route path="/orders" element={<Orders onLogout={handleLogout} />} />
+              <Route path="/items" element={<Items onLogout={handleLogout} />} />
+            </Route>
+
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+      </div>
+    </BrowserRouter>
   );
 }
 

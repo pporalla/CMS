@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
+from django.contrib.auth import authenticate
+from rest_framework_simplejwt.tokens import RefreshToken
 # Create your views here.
 class SignupView(APIView):
     # This tells Django to only run this code if the frontend is making a POST request
@@ -66,3 +68,35 @@ class UserProfileView(APIView):
             "store_id" : store_data["id"],
             "address": user.address
         })
+        
+class LoginView(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        password = request.data.get('password')
+        requested_role = request.data.get('role') # 'employee' or 'manager' coming from React
+
+        # authenticate() checks the database to see if the email and password match
+        user = authenticate(username=email, password=password)
+
+        if user is not None:
+            # STRICT ROLE VALIDATION
+            is_manager = user.groups.filter(name='Manager').exists()
+            is_employee = user.groups.filter(name='Employee').exists()
+
+            # If they clicked 'Manager' but aren't in the Manager group, kick them out
+            if requested_role == 'manager' and not is_manager:
+                return Response({"error": "Unauthorized: You do not have Manager privileges."}, status=status.HTTP_403_FORBIDDEN)
+            
+            # If they clicked 'Employee' but aren't in the Employee group, kick them out
+            if requested_role == 'employee' and not is_employee:
+                return Response({"error": "Unauthorized: You do not have Employee privileges."}, status=status.HTTP_403_FORBIDDEN)
+
+            # If the database verifies their role, generate the JWT tokens manually
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+                'role': requested_role
+            })
+        else:
+            return Response({"error": "Invalid email or password"}, status=status.HTTP_401_UNAUTHORIZED)

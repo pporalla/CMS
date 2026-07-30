@@ -4,7 +4,30 @@ from rest_framework.response import Response
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from .serializers import ItemSerializer, OrderSerializer
+from .serializers import ItemSerializer, OrderSerializer, StoreSerializer
+
+
+class CreateStoreView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        # SECURITY: Verify the user is actually in the Manager group
+        is_manager = request.user.groups.filter(name='Manager').exists() 
+        if not is_manager:
+            return Response(
+                {"error": "Unauthorized. Only Managers can create new stores."}, 
+                status=status.HTTP_403_FORBIDDEN
+            )
+        # Pass the React data to the serializer
+        serializer = StoreSerializer(data=request.data)
+        
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {"message": "Store created successfully!", "store": serializer.data}, 
+                status=status.HTTP_201_CREATED
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ItemListView(APIView):
     permission_classes = [IsAuthenticated]
